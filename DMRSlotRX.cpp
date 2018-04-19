@@ -22,15 +22,20 @@
 #include "DMRSlotType.h"
 #include "Utils.h"
 
+#if defined(SAMPLE_48KHZ)
+const uint16_t SCAN_START = 790U;
+const uint16_t SCAN_END   = 920U;
+#else
 const uint16_t SCAN_START = 400U;
 const uint16_t SCAN_END   = 490U;
+#endif
 
 const q15_t SCALING_FACTOR = 19505;      // Q15(0.60)
 
-const uint8_t MAX_SYNC_SYMBOLS_ERRS = 2U;
-const uint8_t MAX_SYNC_BYTES_ERRS   = 3U;
+const uint8_t MAX_SYNC_SYMBOLS_ERRS = 4U;
+const uint8_t MAX_SYNC_BYTES_ERRS   = 6U;
 
-const uint8_t MAX_SYNC_LOST_FRAMES  = 13U;
+const uint8_t MAX_SYNC_LOST_FRAMES  = 26U;
 
 const uint8_t BIT_MASK_TABLE[] = {0x80U, 0x40U, 0x20U, 0x10U, 0x08U, 0x04U, 0x02U, 0x01U};
 
@@ -97,7 +102,11 @@ bool CDMRSlotRX::processSample(q15_t sample, uint16_t rssi)
     return m_state != DMRRXS_NONE;
 
   // Ensure that the buffer doesn't overflow
+#if defined(SAMPLE_48KHZ)
+  if (m_dataPtr > m_endPtr || m_dataPtr >= 1900U)
+#else
   if (m_dataPtr > m_endPtr || m_dataPtr >= 900U)
+#endif
     return m_state != DMRRXS_NONE;
 
   m_buffer[m_dataPtr] = sample;

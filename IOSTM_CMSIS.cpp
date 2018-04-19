@@ -107,7 +107,11 @@ USART1_RXD PA10  input (AF)
 const uint16_t DC_OFFSET = 2048U;
 
 // Sampling frequency
+#if defined(SAMPLE_48KHZ)
+#define SAMP_FREQ   48000
+#else
 #define SAMP_FREQ   24000
+#endif
 
 extern "C" {
   void TIM2_IRQHandler() {

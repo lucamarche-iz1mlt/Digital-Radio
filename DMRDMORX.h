@@ -22,7 +22,11 @@
 #include "Config.h"
 #include "DMRDefines.h"
 
+#if defined(SAMPLE_48KHZ)
+const uint16_t DMO_BUFFER_LENGTH_SAMPLES = 2880U;   // 60ms at 48 kHz
+#else
 const uint16_t DMO_BUFFER_LENGTH_SAMPLES = 1440U;   // 60ms at 24 kHz
+#endif
 
 enum DMORX_STATE {
   DMORXS_NONE,

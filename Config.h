@@ -45,7 +45,7 @@
 // #define ARDUINO_DUE_PAPA
 
 // For the ZUM V1.0 and V1.0.1 boards pin layout
-#define ARDUINO_DUE_ZUM_V10
+// #define ARDUINO_DUE_ZUM_V10
 
 // For the SQ6POG board
 // #define STM32F1_POG
@@ -55,15 +55,17 @@
 
 // For ST Nucleo-64 STM32F446RE board
 // #define STM32F4_NUCLEO_MORPHO_HEADER
-// #define STM32F4_NUCLEO_ARDUINO_HEADER
+#define STM32F4_NUCLEO_ARDUINO_HEADER
 
 // Use separate mode pins to switch external filters/bandwidth for example
 // #define STM32F4_NUCLEO_MODE_PINS
 
 // Pass RSSI information to the host
-// #define SEND_RSSI_DATA
+#define SEND_RSSI_DATA
 
 // Use the modem as a serial repeater for Nextion displays
 // #define SERIAL_REPEATER
 
+// Select sampling mode, default 24Khz 
+#define SAMPLE_48KHZ
 #endif

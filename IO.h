@@ -64,7 +64,11 @@ private:
   CRSSIRB              m_rssiBuffer;
 
   arm_fir_instance_q15 m_rrcFilter;
+#if defined(SAMPLE_48KHZ)
+  q15_t                m_rrcState[140U];           // NoTaps + BlockSize - 1, 82 + 20 - 1 plus some spare
+#else
   q15_t                m_rrcState[70U];           // NoTaps + BlockSize - 1, 42 + 20 - 1 plus some spare
+#endif
 
   bool                 m_pttInvert;
   q15_t                m_rxLevel;

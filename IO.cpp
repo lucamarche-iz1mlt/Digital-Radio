@@ -22,11 +22,21 @@
 #include "Globals.h"
 #include "IO.h"
 
+#if defined(SAMPLE_48KHZ)
+// Generated using rcosdesign(0.2, 8, 10, 'sqrt') in MATLAB
+static q15_t RRC_0_2_FILTER[] = {284, 198, 73, -78, -240, -393, -517, -590, -599, -533, -391, -181, 79, 364, 643, 880, 1041, 1097, 1026, 819,
+                                  483, 39, -477, -1016, -1516, -1915, -2150, -2164, -1914, -1375, -545, 557, 1886, 3376, 4946, 6502, 7946, 9184,
+                                  10134, 10731, 10935, 10731, 10134, 9184, 7946, 6502, 4946, 3376, 1886, 557, -545, -1375, -1914, -2164, -2150,
+                                  -1915, -1516, -1016, -477, 39, 483, 819, 1026, 1097, 1041, 880, 643, 364, 79, -181, -391, -533, -599, -590,
+                                  -517, -393, -240, -78, 73, 198, 284, 0};
+const uint16_t RRC_0_2_FILTER_LEN = 82U;
+#else
 // Generated using rcosdesign(0.2, 8, 5, 'sqrt') in MATLAB
 static q15_t RRC_0_2_FILTER[] = {401, 104, -340, -731, -847, -553, 112, 909, 1472, 1450, 683, -675, -2144, -3040, -2706, -770, 2667, 6995,
                                  11237, 14331, 15464, 14331, 11237, 6995, 2667, -770, -2706, -3040, -2144, -675, 683, 1450, 1472, 909, 112,
                                  -553, -847, -731, -340, 104, 401, 0};
 const uint16_t RRC_0_2_FILTER_LEN = 42U;
+#endif
 
 const uint16_t DC_OFFSET = 2048U;
 
@@ -55,7 +65,11 @@ m_dacOverflow(0U),
 m_watchdog(0U),
 m_lockout(false)
 {
+#if defined(SAMPLE_48KHZ)
+  ::memset(m_rrcState,      0x00U,  140U * sizeof(q15_t));
+#else
   ::memset(m_rrcState,      0x00U,  70U * sizeof(q15_t));
+#endif
 
   m_rrcFilter.numTaps = RRC_0_2_FILTER_LEN;
   m_rrcFilter.pState  = m_rrcState;
@@ -184,7 +198,11 @@ void CIO::process()
   m_ledCount++;
   if (m_started) {
     // Two seconds timeout
+#if defined(SAMPLE_48KHZ)
+    if (m_watchdog >= 96000U) {
+#else
     if (m_watchdog >= 48000U) {
+#endif
       if (m_modemState == STATE_DSTAR || m_modemState == STATE_DMR || m_modemState == STATE_YSF || m_modemState == STATE_P25 || m_modemState == STATE_NXDN) {
         if (m_modemState == STATE_DMR && m_tx)
           dmrTX.setStart(false);
@@ -195,13 +213,21 @@ void CIO::process()
       m_watchdog = 0U;
     }
 
+#if defined(SAMPLE_48KHZ)
+    if (m_ledCount >= 48000U) {
+#else
     if (m_ledCount >= 24000U) {
+#endif
       m_ledCount = 0U;
       m_ledValue = !m_ledValue;
       setLEDInt(m_ledValue);
     }
   } else {
+#if defined(SAMPLE_48KHZ)
+    if (m_ledCount >= 480000U) {
+#else
     if (m_ledCount >= 240000U) {
+#endif
       m_ledCount = 0U;
       m_ledValue = !m_ledValue;
       setLEDInt(m_ledValue);

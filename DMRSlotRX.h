@@ -41,7 +41,30 @@ public:
 
   void reset();
 
+#if defined(SAMPLE_48KHZ)
 private:
+  bool        m_slot;
+  uint32_t    m_bitBuffer[DMR_RADIO_SYMBOL_LENGTH];
+  q15_t       m_buffer[1900U];
+  uint16_t    m_bitPtr;
+  uint16_t    m_dataPtr;
+  uint16_t    m_syncPtr;
+  uint16_t    m_startPtr;
+  uint16_t    m_endPtr;
+  uint16_t    m_delayPtr;
+  q31_t       m_maxCorr;
+  q15_t       m_centre[4U];
+  q15_t       m_threshold[4U];
+  uint8_t     m_averagePtr;
+  uint8_t     m_control;
+  uint8_t     m_syncCount;
+  uint8_t     m_colorCode;
+  uint16_t    m_delay;
+  DMRRX_STATE m_state;
+  uint8_t     m_n;
+  uint8_t     m_type;
+  uint16_t    m_rssi[1900U];
+#else
   bool        m_slot;
   uint32_t    m_bitBuffer[DMR_RADIO_SYMBOL_LENGTH];
   q15_t       m_buffer[900U];
@@ -63,7 +86,7 @@ private:
   uint8_t     m_n;
   uint8_t     m_type;
   uint16_t    m_rssi[900U];
-
+#endif
   void correlateSync(bool first);
   void samplesToBits(uint16_t start, uint8_t count, uint8_t* buffer, uint16_t offset, q15_t centre, q15_t threshold);
   void writeRSSIData(uint8_t* frame);
