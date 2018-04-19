@@ -76,7 +76,11 @@ const uint8_t MMDVM_DEBUG3       = 0xF3U;
 const uint8_t MMDVM_DEBUG4       = 0xF4U;
 const uint8_t MMDVM_DEBUG5       = 0xF5U;
 
-#define DESCRIPTION              "MMDVM 20180415 (DMR only)"
+#if defined(SAMPLE_48KHZ)
+#define DESCRIPTION              "MMDVM 20180419 48Khz (DMR only)"
+#else
+#define DESCRIPTION              "MMDVM 20180419 (DMR only)"
+#endif
 
 #if defined(GITVERSION)
 #define concat(a, b) a " GitID #" b ""
@@ -634,9 +638,11 @@ void CSerialPort::process()
       }
     }
   }
-
+#if defined(SAMPLE_48KHZ)
+  if (io.getWatchdog() >= 96000U) {
+#else
   if (io.getWatchdog() >= 48000U) {
-
+#endif
     m_ptr = 0U;
     m_len = 0U;
   }
